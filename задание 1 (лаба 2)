@@ -1,0 +1,58 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+struct Point {
+    double x, y;
+};
+
+// Функция для вычисления расстояния от точки P до прямой, заданной точками A и B
+double distanceToLine(Point A, Point B, Point P) {
+    double A_coeff = B.y - A.y;
+    double B_coeff = A.x - B.x;
+    double C_coeff = B.x * A.y - A.x * B.y;
+    return fabs(A_coeff * P.x + B_coeff * P.y + C_coeff) / sqrt(A_coeff * A_coeff + B_coeff * B_coeff);
+}
+
+// Функция для нахождения минимального расстояния от точки до сторон треугольника и вывода названия стороны
+double minDistanceToTriangle(Point A, Point B, Point C, Point P, string& side) {
+    double d1 = distanceToLine(A, B, P);
+    double d2 = distanceToLine(B, C, P);
+    double d3 = distanceToLine(C, A, P);
+
+    double minDist = d1;
+    side = "AB";
+
+    if (d2 < minDist) {
+        minDist = d2;
+        side = "BC";
+    }
+    if (d3 < minDist) {
+        minDist = d3;
+        side = "CA";
+    }
+
+    return minDist;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    Point A, B, C, P;
+    cout << "Введите координаты вершины A (x y): ";
+    cin >> A.x >> A.y;
+    cout << "Введите координаты вершины B (x y): ";
+    cin >> B.x >> B.y;
+    cout << "Введите координаты вершины C (x y): ";
+    cin >> C.x >> C.y;
+    cout << "Введите координаты точки P (x y): ";
+    cin >> P.x >> P.y;
+
+    string closestSide;
+    double result = minDistanceToTriangle(A, B, C, P, closestSide);
+    cout << "Минимальное расстояние от точки P до стороны " << closestSide << " треугольника: " << result << endl;
+
+    return 0;
+}
+
+1 задание (лаба 2)
