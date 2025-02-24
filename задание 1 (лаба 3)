@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int countOppositeSignPairs(int* arr, int size) {
+    int count = 0;
+    int* ptr1 = arr;
+    int* ptr2 = arr + 1;
+
+    while (ptr2 < arr + size) {
+        if ((*ptr1 < 0 && *ptr2 > 0) || (*ptr1 > 0 && *ptr2 < 0)) {
+            count++;
+        }
+        ptr1++;
+        ptr2++;
+    }
+
+    return count;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    srand(time(0));
+
+    int size;
+    cout << "Введите размер массива: ";
+    cin >> size;
+
+    if (size < 2) {
+        cout << "Массив должен содержать хотя бы 2 элемента." << endl;
+        return 1;
+    }
+
+    int* arr = new int[size];
+
+    cout << "Сгенерированный массив: ";
+    for (int* ptr = arr; ptr < arr + size; ptr++) {
+        *ptr = rand() % 101 - 50;
+        cout << *ptr << " ";
+    }
+    cout << endl;
+
+    int result = countOppositeSignPairs(arr, size);
+    cout << "Количество пар соседних элементов с противоположными знаками: " << result << endl;
+
+    delete[] arr;
+
+    return 0;
+}
