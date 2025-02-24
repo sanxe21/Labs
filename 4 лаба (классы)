@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Product {
+private:
+    string name;
+    string manufacturer;
+    double price;
+    int shelf_life;
+    int quantity;
+
+public:
+    Product(string n, string m, double p, int s, int q)
+        : name(n), manufacturer(m), price(p), shelf_life(s), quantity(q) {}
+
+    string getName() const { return name; }
+    double getPrice() const { return price; }
+    int getShelfLife() const { return shelf_life; }
+
+    void print() const {
+        cout << "Наименование: " << name
+            << ", Производитель: " << manufacturer
+            << ", Цена: " << price
+            << ", Срок хранения: " << shelf_life
+            << " дней, Количество: " << quantity << endl;
+    }
+};
+
+// Функция для вывода списка товаров по заданному наименованию
+void listByName(const vector<Product>& products, const string& name) {
+    for (const auto& product : products) {
+        if (product.getName() == name) {
+            product.print();
+        }
+    }
+}
+
+// Функция для вывода списка товаров по заданному наименованию и цене
+void listByNameAndPrice(const vector<Product>& products, const string& name, double maxPrice) {
+    for (const auto& product : products) {
+        if (product.getName() == name && product.getPrice() <= maxPrice) {
+            product.print();
+        }
+    }
+}
+
+// Функция для вывода товаров с сроком хранения больше заданного
+void listByShelfLife(const vector<Product>& products, int minShelfLife) {
+    for (const auto& product : products) {
+        if (product.getShelfLife() > minShelfLife) {
+            product.print();
+        }
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    vector<Product> products = {
+        {"Молоко", "Производитель1", 120.5, 10, 50},
+        {"Хлеб", "Производитель2", 50.0, 5, 30},
+        {"Молоко", "Производитель3", 100.0, 12, 40},
+        {"Йогурт", "Производитель4", 80.0, 15, 25}
+    };
+
+    cout << "Товары с наименованием 'Молоко':\n";
+    listByName(products, "Молоко");
+
+    cout << "\nТовары 'Молоко' с ценой до 110:\n";
+    listByNameAndPrice(products, "Молоко", 110);
+
+    cout << "\nТовары с сроком хранения больше 8 дней:\n";
+    listByShelfLife(products, 8);
+
+    return 0;
+}
