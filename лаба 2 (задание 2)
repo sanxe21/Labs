@@ -1,0 +1,66 @@
+// Задание 2 - Написать функцию умножения двух матриц. Предусмотреть проверку допустимости умножения матриц.
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+// Функция для заполнения матрицы случайными числами
+void fillMatrix(vector<vector<int>>& matrix, int size) {
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            matrix[i][j] = rand() % 100; // Диапазон 0-99
+        }
+    }
+}
+
+// Функция для вывода матрицы
+void printMatrix(const vector<vector<int>>& matrix) {
+    for (const auto& row : matrix) {
+        for (int num : row) {
+            cout << num << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Функция умножения двух квадратных матриц
+void multiplyMatrices(const vector<vector<int>>& A, const vector<vector<int>>& B, vector<vector<int>>& result) {
+    int size = A.size();
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result[i][j] = 0;
+            for (int k = 0; k < size; ++k) {
+                result[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    srand(time(0)); // Инициализация генератора случайных чисел
+
+    int size;
+    cout << "Введите размер квадратной матрицы: ";
+    cin >> size;
+
+    vector<vector<int>> A(size, vector<int>(size));
+    vector<vector<int>> B(size, vector<int>(size));
+    vector<vector<int>> result(size, vector<int>(size, 0));
+
+    fillMatrix(A, size);
+    fillMatrix(B, size);
+
+    cout << "Матрица A:" << endl;
+    printMatrix(A);
+    cout << "Матрица B:" << endl;
+    printMatrix(B);
+
+    multiplyMatrices(A, B, result);
+
+    cout << "Результат умножения A * B:" << endl;
+    printMatrix(result);
+
+    return 0;
+}
