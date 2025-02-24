@@ -1,0 +1,62 @@
+#include <iostream>
+
+using namespace std;
+
+void Center(const char* s1, char* s2, int l) {
+    int len1 = 0;
+
+    // Находим длину s1 без strlen
+    while (s1[len1] != '\0') {
+        len1++;
+    }
+
+    // Если s1 длиннее l, обрезаем
+    if (len1 > l) {
+        len1 = l;
+    }
+
+    // Вычисляем отступ слева
+    int left_padding = (l - len1) / 2;
+
+    // Заполняем s2 пробелами
+    for (int i = 0; i < l; i++) {
+        s2[i] = ' ';
+    }
+
+    // Копируем s1 в центр s2
+    for (int i = 0; i < len1; i++) {
+        s2[left_padding + i] = s1[i];
+    }
+
+    // Добавляем завершающий символ
+    s2[l] = '\0';
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    const int SIZE = 50;  // Максимальный размер строки
+    char s1[SIZE], s2[SIZE];
+
+    // Ввод строки s1
+    cout << "Введите строку s1: ";
+    cin.getline(s1, SIZE);
+
+    // Ввод длины строки l
+    int l;
+    cout << "Введите длину строки l: ";
+    cin >> l;
+
+    // Проверка корректности l
+    if (l <= 0 || l >= SIZE) {
+        cout << "Ошибка: некорректное значение l" << endl;
+        return 1;
+    }
+
+    // Центрирование
+    Center(s1, s2, l);
+
+    // Вывод результата
+    cout << "Результат: '" << s2 << "'" << endl;
+
+    return 0;
+}
