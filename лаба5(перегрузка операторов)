@@ -1,0 +1,288 @@
+#include <iostream>
+#include <stdexcept>
+
+class Matrix {
+private:
+    int rows, cols;
+    double** data;
+
+    void allocateMemory() {
+        data = new double* [rows];
+        for (int i = 0; i < rows; ++i) {
+            data[i] = new double[cols];
+        }
+    }
+
+    void deallocateMemory() {
+        for (int i = 0; i < rows; ++i) {
+            delete[] data[i];
+        }
+        delete[] data;
+    }
+
+public:
+    Matrix(int r, int c) : rows(r), cols(c) {
+        if (r <= 0 || c <= 0) {
+            throw std::invalid_argument("Размеры матрицы должны быть положительными");
+        }
+        allocateMemory();
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                data[i][j] = 0.0;
+            }
+        }
+    }
+
+    ~Matrix() {
+        deallocateMemory();
+    }
+
+    Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) {
+        allocateMemory();
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                data[i][j] = other.data[i][j];
+            }
+        }
+    }
+
+    Matrix& operator=(const Matrix& other) {
+        if (this != &other) {
+            deallocateMemory();
+            rows = other.rows;
+            cols = other.cols;
+            allocateMemory();
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < cols; ++j) {
+                    data[i][j] = other.data[i][j];
+                }
+            }
+        }
+        return *this;
+    }
+
+    void setElement(int i, int j, double value) {
+        if (i >= 0 && i < rows && j >= 0 && j < cols) {
+            data[i][j] = value;
+        }
+        else {
+            throw std::out_of_range("Индексы вне диапазона матрицы");
+        }
+    }
+
+    void display() const {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                std::cout << data[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    Matrix getMinor(int rowToRemove, int colToRemove) const {
+        if (rowToRemove < 0  || rowToRemove >= rows || colToRemove < 0 || colToRemove >= cols) {
+            throw std::out_of_range("Недопустимые индексы для минора");
+        }
+        Matrix minor(rows - 1, cols - 1);
+        int minorRow = 0, minorCol = 0;
+        for (int i = 0; i < rows; ++i) {
+            if (i == rowToRemove) continue;
+            minorCol = 0;
+            for (int j = 0; j < cols; ++j) {
+                if (j == colToRemove) continue;
+                minor.data[minorRow][minorCol] = data[i][j];
+                minorCol++;
+            }
+            minorRow++;
+        }
+        return minor;
+    }
+
+    void setMinor(int rowToRemove, int colToRemove, const Matrix& minor) {
+        if (minor.rows != rows - 1 || minor.cols != cols - 1) {
+            throw std::invalid_argument("Размер минора не соответствует");
+        }
+        int minorRow = 0, minorCol = 0;
+        for (int i = 0; i < rows; ++i) {
+            if (i == rowToRemove) continue;
+            minorCol = 0;
+            for (int j = 0; j < cols; ++j) {
+                if (j == colToRemove) continue;
+                data[i][j] = minor.data[minorRow][minorCol];
+                minorCol++;
+            }
+            minorRow++;
+        }
+    }
+
+    Matrix operator+(const Matrix& other) const {
+        if (rows != other.rows || cols != other.cols) {
+            throw std::invalid_argument("Размеры матриц не совпадают");
+        }
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                result.data[i][j] = data[i][j] + other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    Matrix operator-(const Matrix& other) const {
+        if (rows != other.rows || cols != other.cols) {
+            throw std::invalid_argument("Размеры матриц не совпадают");
+        }
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                result.data[i][j] = data[i][j] - other.data[i][j];
+            }
+        }
+
+            return result;
+    }
+
+    Matrix operator*(const Matrix& other) const {
+        if (cols != other.rows) {
+            throw std::invalid_argument("Нельзя умножить матрицы: неподходящие размеры");
+        }
+        Matrix result(rows, other.cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < other.cols; ++j) {
+                double sum = 0;
+                for (int k = 0; k < cols; ++k) {
+                    sum += data[i][k] * other.data[k][j];
+                }
+                result.data[i][j] = sum;
+            }
+        }
+        return result;
+    }
+};
+
+// Интерактивное меню с switch-case
+int main() {
+    setlocale(LC_ALL, "RUS");
+    int rows, cols;
+    std::cout << "Введите количество строк матрицы: ";
+    std::cin >> rows;
+    std::cout << "Введите количество столбцов матрицы: ";
+    std::cin >> cols;
+
+    try {
+        Matrix mat(rows, cols);
+        int choice;
+
+        do {
+            std::cout << "\nМеню:\n";
+            std::cout << "1. Установить элемент матрицы\n";
+            std::cout << "2. Вывести матрицу\n";
+            std::cout << "3. Вывести минор\n";
+            std::cout << "4. Изменить минор\n";
+            std::cout << "5. Сложить два минора\n";
+            std::cout << "6. Вычесть два минора\n";
+            std::cout << "7. Умножить два минора\n";
+            std::cout << "0. Выход\n";
+            std::cout << "Выберите действие: ";
+            std::cin >> choice;
+
+            switch (choice) {
+            case 1: {
+                int i, j;
+                double value;
+                std::cout << "Введите индекс строки (0-" << rows - 1 << "): ";
+                std::cin >> i;
+                std::cout << "Введите индекс столбца (0-" << cols - 1 << "): ";
+                std::cin >> j;
+                std::cout << "Введите значение: ";
+                std::cin >> value;
+                mat.setElement(i, j, value);
+                std::cout << "Элемент установлен.\n";
+                break;
+            }
+            case 2: {
+                std::cout << "Матрица:\n";
+                mat.display();
+                break;
+            }
+            case 3: {
+                int row, col;
+                std::cout << "Введите строку для исключения (0-" << rows - 1 << "): ";
+                std::cin >> row;
+                std::cout << "Введите столбец для исключения (0-" << cols - 1 << "): ";
+                std::cin >> col;
+                std::cout << "Минор:\n";
+                mat.getMinor(row, col).display();
+                break;
+            }
+            case 4: {
+                int row, col;
+                std::cout << "Введите строку для исключения (0-" << rows - 1 << "): ";
+                std::cin >> row;
+                std::cout << "Введите столбец для исключения (0-" << cols - 1 << "): ";
+                std::cin >> col;
+                Matrix minor(rows - 1, cols - 1);
+                std::cout << "Введите элементы минора " << (rows - 1) << "x" << (cols - 1) << ":\n";
+                for (int i = 0; i < rows - 1; ++i) {
+                    for (int j = 0; j < cols - 1; ++j) {
+                        double value;
+                        std::cout << "Элемент [" << i << "][" << j << "]: ";
+                        std::cin >> value;
+                        minor.setElement(i, j, value);
+                    }
+                }
+                mat.setMinor(row, col, minor);
+                std::cout << "Минор изменён.\n";
+                break;
+            }
+            case 5: {
+                int row1, col1, row2, col2;
+                std::cout << "Введите строку и столбец для первого минора: ";
+                std::cin >> row1 >> col1;
+                std::cout << "Введите строку и столбец для второго минора: ";
+                std::cin >> row2 >> col2;
+                Matrix minor1 = mat.getMinor(row1, col1);
+                Matrix minor2 = mat.getMinor(row2, col2);
+                std::cout << "Результат сложения миноров:\n";
+                (minor1 + minor2).display();
+                break;
+            }
+            case 6: {
+                int row1, col1, row2, col2;
+                std::cout << "Введите строку и столбец для первого минора: ";
+                std::cin >> row1 >> col1;
+                std::cout << "Введите строку и столбец для второго минора: ";
+                std::cin >> row2 >> col2;
+                Matrix minor1 = mat.getMinor(row1, col1);
+                Matrix minor2 = mat.getMinor(row2, col2);
+                std::cout << "Результат вычитания миноров:\n";
+                (minor1 - minor2).display();
+                break;
+            }
+            case 7: {
+                int row1, col1, row2, col2;
+                std::cout << "Введите строку и столбец для первого минора: ";
+                std::cin >> row1 >> col1;
+                std::cout << "Введите строку и столбец для второго минора: ";
+                std::cin >> row2 >> col2;
+                Matrix minor1 = mat.getMinor(row1, col1);
+                Matrix minor2 = mat.getMinor(row2, col2);
+                std::cout << "Результат умножения миноров:\n";
+                (minor1 * minor2).display();
+                break;
+            }
+            case 0:
+                std::cout << "Выход из программы.\n";
+                break;
+            default:
+                std::cout << "Неверный выбор. Попробуйте снова.\n";
+                break;
+            }
+        } while (choice != 0);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Ошибка: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
