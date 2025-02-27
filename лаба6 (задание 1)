@@ -1,0 +1,115 @@
+#include <iostream>
+#include <string>
+
+// Базовый класс B1
+class B1 {
+protected:
+    std::string name;
+
+public:
+    B1(const std::string& n = "B1") : name(n) {}
+    virtual void Show() const {
+        std::cout << "B1: " << name << std::endl;
+    }
+    virtual ~B1() = default; // Виртуальный деструктор для правильного удаления объектов
+};
+
+// Класс B2, наследует B1 с protected
+class B2 : protected B1 {
+protected:
+    int value;
+
+public:
+    B2(const std::string& n = "B2", int v = 10) : B1(n), value(v) {}
+    void Show() const override {
+        B1::Show(); // Вызываем метод базового класса
+        std::cout << "B2: value = " << value << std::endl;
+    }
+};
+
+// Класс D1, наследует B2 с protected
+class D1 : protected B2 {
+protected:
+    double data;
+
+public:
+    D1(const std::string& n = "D1", int v = 20, double d = 3.14) : B2(n, v), data(d) {}
+    void Show() const override {
+        B2::Show(); // Вызываем метод базового класса
+        std::cout << "D1: data = " << data << std::endl;
+    }
+};
+
+// Класс D2, наследует D1 с public
+class D2 : public D1 {
+private:
+    std::string info;
+
+public:
+    D2(const std::string& n = "D2", int v = 30, double d = 2.71, const std::string& i = "Info D2")
+        : D1(n, v, d), info(i) {}
+    void Show() const override {
+        D1::Show(); // Вызываем метод базового класса
+        std::cout << "D2: info = " << info << std::endl;
+    }
+};
+
+// Класс D3, наследует D1 с private
+class D3 : private D1 {
+private:
+    bool flag;
+
+public:
+    D3(const std::string& n = "D3", int v = 40, double d = 1.41, bool f = true)
+        : D1(n, v, d), flag(f) {}
+    void Show() const {
+        D1::Show(); // Вызываем метод базового класса
+        std::cout << "D3: flag = " << (flag ? "true" : "false") << std::endl;
+    }
+};
+
+// Класс D4, наследует D2 с public
+class D4 : public D2 {
+private:
+    char symbol;
+
+public:
+    D4(const std::string& n = "D4", int v = 50, double d = 0.58, const std::string& i = "Info D4", char s = 'A')
+        : D2(n, v, d, i), symbol(s) {}
+    void Show() const override {
+        D2::Show(); // Вызываем метод базового класса
+        std::cout << "D4: symbol = " << symbol << std::endl;
+    }
+};
+
+// Функция main для иллюстрации иерархии
+int main() {
+    setlocale(LC_ALL, "RUS");
+    std::cout << "Демонстрация иерархии наследования:\n\n";
+
+    // Создаём объекты каждого класса
+    B1 b1;
+    B2 b2;
+    D1 d1;
+    D2 d2;
+    D3 d3;
+    D4 d4;
+
+    std::cout << "Вывод объектов:\n";
+    std::cout << "---------------\n";
+
+    // Выводим информацию о каждом объекте
+    b1.Show();
+    std::cout << "---------------\n";
+    b2.Show();
+    std::cout << "---------------\n";
+    d1.Show();
+    std::cout << "---------------\n";
+    d2.Show();
+    std::cout << "---------------\n";
+    d3.Show();
+    std::cout << "---------------\n";
+    d4.Show();
+
+    return 0;
+}
