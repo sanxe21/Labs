@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cmath>
+#include <vector>
+
+// Базовый класс Point (точка)
+class Point {
+protected:
+    double x, y, z; // Координаты в 3D-пространстве
+
+public:
+    Point(double x = 0.0, double y = 0.0, double z = 0.0) : x(x), y(y), z(z) {}
+    virtual double getSize() const = 0; // Виртуальная функция для получения размера (чистая виртуальная)
+    virtual void display() const = 0; // Виртуальная функция для вывода информации
+    virtual ~Point() = default; // Виртуальный деструктор для корректного удаления
+
+    // Геттеры для координат (для доступа из производных классов)
+    double getX() const { return x; }
+    double getY() const { return y; }
+    double getZ() const { return z; }
+};
+
+// Класс Square (квадрат), наследует Point
+class Square : public Point {
+private:
+    double side; // Длина стороны квадрата
+
+public:
+    Square(double x = 0.0, double y = 0.0, double z = 0.0, double s = 1.0)
+        : Point(x, y, z), side(s) {
+        if (s <= 0) throw std::invalid_argument("Сторона квадрата должна быть положительной");
+    }
+
+    double getSize() const override {
+        return side * side; // Площадь квадрата
+    }
+
+    void display() const override {
+        std::cout << "Квадрат со сторонами (" << x << ", " << y << ", " << z << "): "
+            << "Длина " << side << ", Площадь = " << getSize() << std::endl;
+    }
+};
+
+// Класс Pyramid (пирамида), наследует Point
+class Pyramid : public Point {
+private:
+    double baseSide; // Длина стороны основания (предполагаем квадратное основание)
+    double height;   // Высота пирамиды
+
+public:
+    Pyramid(double x = 0.0, double y = 0.0, double z = 0.0, double bs = 1.0, double h = 1.0)
+        : Point(x, y, z), baseSide(bs), height(h) {
+        if (bs <= 0 || h <= 0) throw std::invalid_argument("Сторона основания и высота пирамиды должны быть положительными");
+    }
+
+    double getSize() const override {
+        // Объём пирамиды: V = (1/3) * S_основания * h, где S_основания = baseSide^2
+        return (1.0 / 3.0) * (baseSide * baseSide) * height;
+    }
+
+    void display() const override {
+        std::cout << "Пирамида со сторонами (" << x << ", " << y << ", " << z << "): "
+            << "Сторона основания = " << baseSide << ", Высота = " << height
+            << ", Объем = " << getSize() << std::endl;
+    }
+};
+
+// Функция для демонстрации полиморфизма
+void showObject(const Point* obj) {
+    obj->display();
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    try {
+        // Создаём объекты разных классов
+        Point* point1 = new Square(1.0, 2.0, 3.0, 2.0); // Квадрат с координатами (1,2,3) и стороной 2
+        Point* point2 = new Pyramid(1.0, 0.0, 0.0, 3.0, 3.0); // Пирамида с координатами (0,0,0), стороной основания 2 и высотой 3
+
+        // Вектор указателей для хранения объектов
+        std::vector<Point*> objects;
+        objects.push_back(point1);
+        objects.push_back(point2);
+
+        // Вывод информации о каждом объекте через полиморфизм
+        std::cout << "Информация о объектах:\n";
+        std::cout << "--------------------\n";
+        for (const Point* obj : objects) {
+            showObject(obj);
+        }
+
+        // Очистка памяти
+        for (Point* obj : objects) {
+            delete obj;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Ошибка: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
