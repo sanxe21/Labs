@@ -4,16 +4,16 @@
 class Matrix {
 private:
     int rows, cols;
-    double** data;
+    double** data; // массив для хранения матрицы
 
-    void allocateMemory() {
+    void allocateMemory() { // функция выделения памяти
         data = new double* [rows];
         for (int i = 0; i < rows; ++i) {
             data[i] = new double[cols];
         }
     }
 
-    void deallocateMemory() {
+    void deallocateMemory() { // функция освобождения памяти
         for (int i = 0; i < rows; ++i) {
             delete[] data[i];
         }
@@ -21,23 +21,23 @@ private:
     }
 
 public:
-    Matrix(int r, int c) : rows(r), cols(c) {
+    Matrix(int r, int c) : rows(r), cols(c) { // конструктор
         if (r <= 0 || c <= 0) {
             throw std::invalid_argument("Размеры матрицы должны быть положительными");
         }
         allocateMemory();
-        for (int i = 0; i < rows; ++i) {
+        for (int i = 0; i < rows; ++i) { // инициализация памяти
             for (int j = 0; j < cols; ++j) {
                 data[i][j] = 0.0;
             }
         }
     }
 
-    ~Matrix() {
+    ~Matrix() { // деструктор (высвобождает память)
         deallocateMemory();
     }
 
-    Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) {
+    Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) { // конструктор для копирования
         allocateMemory();
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    Matrix& operator=(const Matrix& other) {
+    Matrix& operator=(const Matrix& other) { // перегрузка оператора присваивания
         if (this != &other) {
             deallocateMemory();
             rows = other.rows;
@@ -61,7 +61,7 @@ public:
         return *this;
     }
 
-    void setElement(int i, int j, double value) {
+    void setElement(int i, int j, double value) { // метод для установки элемента в матрице в необходимую строку и столбец
         if (i >= 0 && i < rows && j >= 0 && j < cols) {
             data[i][j] = value;
         }
@@ -70,7 +70,7 @@ public:
         }
     }
 
-    void display() const {
+    void display() const { // вывод матрицы на экран
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 std::cout << data[i][j] << " ";
@@ -79,7 +79,7 @@ public:
         }
     }
 
-    Matrix getMinor(int rowToRemove, int colToRemove) const {
+    Matrix getMinor(int rowToRemove, int colToRemove) const { // вывод минора
         if (rowToRemove < 0  || rowToRemove >= rows || colToRemove < 0 || colToRemove >= cols) {
             throw std::out_of_range("Недопустимые индексы для минора");
         }
@@ -98,7 +98,7 @@ public:
         return minor;
     }
 
-    void setMinor(int rowToRemove, int colToRemove, const Matrix& minor) {
+    void setMinor(int rowToRemove, int colToRemove, const Matrix& minor) { // изменение минора
         if (minor.rows != rows - 1 || minor.cols != cols - 1) {
             throw std::invalid_argument("Размер минора не соответствует");
         }
@@ -115,7 +115,7 @@ public:
         }
     }
 
-    Matrix operator+(const Matrix& other) const {
+    Matrix operator+(const Matrix& other) const { // перегрузка оператора сложения
         if (rows != other.rows || cols != other.cols) {
             throw std::invalid_argument("Размеры матриц не совпадают");
         }
@@ -128,7 +128,7 @@ public:
         return result;
     }
 
-    Matrix operator-(const Matrix& other) const {
+    Matrix operator-(const Matrix& other) const { // перегрузка оператора вычитания
         if (rows != other.rows || cols != other.cols) {
             throw std::invalid_argument("Размеры матриц не совпадают");
         }
@@ -142,7 +142,7 @@ public:
             return result;
     }
 
-    Matrix operator*(const Matrix& other) const {
+    Matrix operator*(const Matrix& other) const { // перегрузка оператора умножения
         if (cols != other.rows) {
             throw std::invalid_argument("Нельзя умножить матрицы: неподходящие размеры");
         }
