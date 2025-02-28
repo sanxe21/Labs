@@ -1,0 +1,84 @@
+//#include <iostream>
+//using namespace std;
+//
+//int main() {
+//    // Заданный пароль
+//    const string password = "siia";
+//    string userInput;
+//    int errorCount = 0; // Счетчик ошибок
+//
+//    while (true) {
+//        // Запрос пароля у пользователя
+//        cout << "Введите пароль: ";
+//        cin >> userInput;
+//
+//        if (userInput == password) {
+//            // Если пароль совпадает, выводим приглашение
+//            cout << "Добро пожаловать!\n";
+//            break;
+//        } else {
+//            errorCount++;
+//            if (errorCount >= 3) {
+//                // После трех ошибок выводим сообщение о попытке несанкционированного доступа
+//                cout << "Попытка несанкционированного доступа.\n";
+//                break;
+//            }
+//            // В случае ошибки просим повторить ввод
+//            cout << "Неверный пароль, попробуйте еще раз.\n";
+//        }
+//    }
+//
+//    return 0;
+//}
+#include <iostream>
+#include <cmath>
+#include <iomanip> // подключение библиотеки для управления форматом вывода
+using namespace std;
+
+// Определение функции factorial
+int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+// Функция для вычисления члена ряда
+double term(int n, double x) {
+    return pow(-1, n) * pow(x, 2*n) / factorial(2*n);
+}
+
+// Функция для суммирования ряда до n членов
+double sum_series(double x, int n) {
+    double s = 0;
+    for (int i = 0; i <= n; ++i) {
+        s += term(i, x);
+    }
+    return s;
+}
+
+// Функция косинуса
+double y(double x) {
+    return cos(x);
+}
+
+int main() {
+    // Начальные значения
+    double xn = 0.1;
+    double xk = 1;
+    int n = 8;
+    double h = (xk - xn) / 10;
+
+    // Таблица значений
+    cout << "Таблица значений:\n";
+    while (xn <= xk) {
+        double x = xn;
+        double y_val = y(x);
+        double series_val = sum_series(x, n);
+        cout << fixed << setprecision(3) << x << " " << y_val << " " << series_val << endl;
+        xn += h;
+    }
+
+    return 0;
+}
