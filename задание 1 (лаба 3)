@@ -10,7 +10,7 @@ int countOppositeSignPairs(int* arr, int size) {
     int* ptr2 = arr + 1;
 
     while (ptr2 < arr + size) {
-        if ((*ptr1 < 0 && *ptr2 > 0) || (*ptr1 > 0 && *ptr2 < 0)) {
+        if ((*ptr1 <= 0 && *ptr2 >= 0) || (*ptr1 >= 0 && *ptr2 <= 0)) {
             count++;
         }
         ptr1++;
