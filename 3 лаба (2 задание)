@@ -2,61 +2,61 @@
 
 using namespace std;
 
-void Center(const char* s1, char* s2, int l) {
-    int len1 = 0;
+// Функция для вставки s1 в середину s2
+void insertInCenter(const char* s1, char* s2, char* result, int size) {
+    int len1 = 0, len2 = 0;
 
-    // Находим длину s1 без strlen
+    // Находим длину s1
     while (s1[len1] != '\0') {
         len1++;
     }
 
-    // Если s1 длиннее l, обрезаем
-    if (len1 > l) {
-        len1 = l;
+    // Находим длину s2
+    while (s2[len2] != '\0') {
+        len2++;
     }
 
-    // Вычисляем отступ слева
-    int left_padding = (l - len1) / 2;
+    // Вычисляем середину s2
+    int mid = len2 / 2;
 
-    // Заполняем s2 пробелами
-    for (int i = 0; i < l; i++) {
-        s2[i] = ' ';
+    // Копируем первую половину s2
+    int i = 0;
+    for (; i < mid; i++) {
+        result[i] = s2[i];
     }
 
-    // Копируем s1 в центр s2
-    for (int i = 0; i < len1; i++) {
-        s2[left_padding + i] = s1[i];
+    // Вставляем s1
+    for (int j = 0; j < len1; j++, i++) {
+        result[i] = s1[j];
     }
 
-    // Добавляем завершающий символ
-    s2[l] = '\0';
+    // Добавляем вторую половину s2
+    for (int j = mid; j < len2; j++, i++) {
+        result[i] = s2[j];
+    }
+
+    // Завершающий символ
+    result[i] = '\0';
 }
 
 int main() {
     setlocale(LC_ALL, "RUS");
-    const int SIZE = 50;  // Максимальный размер строки
-    char s1[SIZE], s2[SIZE];
+    const int SIZE = 50; // Максимальный размер строки
+    char s1[SIZE], s2[SIZE], result[SIZE];
 
     // Ввод строки s1
     cout << "Введите строку s1: ";
     cin.getline(s1, SIZE);
 
-    // Ввод длины строки l
-    int l;
-    cout << "Введите длину строки l: ";
-    cin >> l;
+    // Ввод строки s2
+    cout << "Введите строку s2: ";
+    cin.getline(s2, SIZE);
 
-    // Проверка корректности l
-    if (l <= 0 || l >= SIZE) {
-        cout << "Ошибка: некорректное значение l" << endl;
-        return 1;
-    }
-
-    // Центрирование
-    Center(s1, s2, l);
+    // Выполняем вставку
+    insertInCenter(s1, s2, result, SIZE);
 
     // Вывод результата
-    cout << "Результат: '" << s2 << "'" << endl;
+    cout << "Результат: '" << result << "'" << endl;
 
     return 0;
 }
