@@ -1,4 +1,141 @@
-if (!(cin >> choice)) {
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Product {
+private:
+    string name;
+    string manufacturer;
+    double price;
+    int shelf_life;
+    int quantity;
+
+public:
+    Product(string n, string m, double p, int s, int q)
+        : name(n), manufacturer(m), price(p), shelf_life(s), quantity(q) {}
+
+    string getName() const { return name; }
+    double getPrice() const { return price; }
+    int getShelfLife() const { return shelf_life; }
+
+    void print() const {
+        cout << "Наименование: " << name
+             << ", Производитель: " << manufacturer
+             << ", Цена: " << price
+             << ", Срок хранения: " << shelf_life
+             << " дней, Количество: " << quantity << endl;
+    }
+};
+
+// Функция для ввода данных о товаре через консоль
+Product inputProduct() {
+    string name, manufacturer;
+    double price;
+    int shelf_life, quantity;
+
+    cout << "Введите наименование: ";
+    cin.ignore(); // Очищаем буфер перед вводом строки
+    getline(cin, name);
+
+    cout << "Введите производителя: ";
+    getline(cin, manufacturer);
+
+    cout << "Введите цену: ";
+    while (!(cin >> price) || price < 0) {
+        cout << "Ошибка: введите положительное число для цены: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+
+    cout << "Введите срок хранения (в днях): ";
+    while (!(cin >> shelf_life) || shelf_life < 0) {
+        cout << "Ошибка: введите положительное число для срока хранения: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+
+    cout << "Введите количество: ";
+    while (!(cin >> quantity) || quantity < 0) {
+        cout << "Ошибка: введите положительное число для количества: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+
+    return Product(name, manufacturer, price, shelf_life, quantity);
+}
+
+// Функция для вывода списка товаров по заданному наименованию
+void listByName(const vector<Product>& products, const string& name) {
+    bool found = false;
+    for (const auto& product : products) {
+        if (product.getName() == name) {
+            product.print();
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Товары с наименованием '" << name << "' не найдены.\n";
+    }
+}
+
+// Функция для вывода списка товаров по заданному наименованию и цене
+void listByNameAndPrice(const vector<Product>& products, const string& name, double maxPrice) {
+    bool found = false;
+    for (const auto& product : products) {
+        if (product.getName() == name && product.getPrice() <= maxPrice) {
+            product.print();
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Товары с наименованием '" << name << "' и ценой до " << maxPrice << " не найдены.\n";
+    }
+}
+
+// Функция для вывода товаров с сроком хранения больше заданного
+void listByShelfLife(const vector<Product>& products, int minShelfLife) {
+    bool found = false;
+    for (const auto& product : products) {
+        if (product.getShelfLife() > minShelfLife) {
+            product.print();
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Товары с сроком хранения больше " << minShelfLife << " дней не найдены.\n";
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    vector<Product> products;
+    int numProducts;
+
+    // Ввод количества товаров
+    cout << "Введите количество товаров: ";
+    while (!(cin >> numProducts) || numProducts <= 0) {
+        cout << "Ошибка: введите положительное число для количества товаров: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+
+    // Ввод данных о товарах
+    for (int i = 0; i < numProducts; i++) {
+        cout << "\nВвод данных для товара " << i + 1 << ":\n";
+        products.push_back(inputProduct());
+    }
+
+    int choice;
+    do {
+        cout << "\nМеню:\n";
+        cout << "1. Вывести товары по наименованию\n";
+        cout << "2. Вывести товары по наименованию и максимальной цене\n";
+        cout << "3. Вывести товары с сроком хранения больше заданного\n";
+        cout << "0. Выход\n";
+        cout << "Выберите действие: ";
+    if (!(cin >> choice)) {
             cin.clear();
             cin.ignore(10000, '\n');
             cout << "Ошибка ввода. Введите число.\n";
