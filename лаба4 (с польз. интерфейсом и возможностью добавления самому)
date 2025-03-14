@@ -1,0 +1,56 @@
+if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Ошибка ввода. Введите число.\n";
+            continue;
+        }
+
+        switch (choice) {
+        case 1: {
+            string name;
+            cout << "Введите наименование: ";
+            cin.ignore();
+            getline(cin, name);
+            cout << "\nТовары с наименованием '" << name << "':\n";
+            listByName(products, name);
+            break;
+        }
+        case 2: {
+            string name;
+            double maxPrice;
+            cout << "Введите наименование: ";
+            cin.ignore();
+            getline(cin, name);
+            cout << "Введите максимальную цену: ";
+            while (!(cin >> maxPrice) || maxPrice < 0) {
+                cout << "Ошибка: введите положительное число для максимальной цены: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+            cout << "\nТовары '" << name << "' с ценой до " << maxPrice << ":\n";
+            listByNameAndPrice(products, name, maxPrice);
+            break;
+        }
+        case 3: {
+            int minShelfLife;
+            cout << "Введите минимальный срок хранения (в днях): ";
+            while (!(cin >> minShelfLife) || minShelfLife < 0) {
+                cout << "Ошибка: введите положительное число для срока хранения: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+            cout << "\nТовары с сроком хранения больше " << minShelfLife << " дней:\n";
+            listByShelfLife(products, minShelfLife);
+            break;
+        }
+        case 0:
+            cout << "Выход из программы.\n";
+            break;
+        default:
+            cout << "Неверный выбор. Попробуйте снова.\n";
+            break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
