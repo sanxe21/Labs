@@ -1,118 +1,118 @@
 #include <iostream>
-#include <string>
+#include <cmath>
+#include <vector>
 
-// Базовый класс B1
-class B1 {
+// Базовый класс Point (точка)
+class Point {
 protected:
-    std::string name;
+    double x, y, z; // Координаты в 3D-пространстве
 
 public:
-    B1(const std::string& n = "B1") : name(n) {}
-    virtual void Show() const {
-        std::cout << "B1: " << name << std::endl;
-    }
-    virtual ~B1() = default; // Виртуальный деструктор для правильного удаления объектов
+    Point(double x = 0.0, double y = 0.0, double z = 0.0) : x(x), y(y), z(z) {}
+    virtual double getSize() const = 0; // Виртуальная функция для получения размера
+    virtual void display() const = 0; // Виртуальная функция для вывода информации
+    virtual ~Point() = default; // Виртуальный деструктор для корректного удаления
+
+    // Геттеры для координат
+    double getX() const { return x; }
+    double getY() const { return y; }
+    double getZ() const { return z; }
 };
 
-// Базовый класс B2 (независимый от B1)
-class B2 {
-protected:
-    int value;
-
+// Конкретный класс для точки
+class ConcretePoint : public Point {
 public:
-    B2(int v = 10) : value(v) {}
-    virtual void Show() const {
-        std::cout << "B2: value = " << value << std::endl;
+    ConcretePoint(double x = 0.0, double y = 0.0, double z = 0.0) : Point(x, y, z) {}
+
+    double getSize() const override {
+        return 0.0; // Размер точки — 0
     }
-    virtual ~B2() = default;
-};
 
-// Класс D1, наследует B1 (public) и B2 (protected)
-class D1 : public B1, protected B2 {
-protected:
-    double data;
-
-public:
-    D1(const std::string& n = "D1", int v = 20, double d = 3.14) 
-        : B1(n), B2(v), data(d) {}
-    void Show() const override {
-        B1::Show(); // Вызываем метод базового класса B1
-        B2::Show(); // Вызываем метод базового класса B2
-        std::cout << "D1: data = " << data << std::endl;
+    void display() const override {
+        std::cout << "Точка с координатами (" << x << ", " << y << ", " << z << "): "
+                  << "Размер = " << getSize() << std::endl;
     }
 };
 
-// Класс D2, наследует D1 (protected)
-class D2 : protected D1 {
+// Класс Square (квадрат), наследует Point
+class Square : public Point {
 private:
-    std::string info;
+    double side; // Длина стороны квадрата
 
 public:
-    D2(const std::string& n = "D2", int v = 30, double d = 2.71, const std::string& i = "Info D2")
-        : D1(n, v, d), info(i) {}
-    void Show() const override {
-        D1::Show(); // Вызываем метод базового класса
-        std::cout << "D2: info = " << info << std::endl;
+    Square(double x = 0.0, double y = 0.0, double z = 0.0, double s = 1.0)
+        : Point(x, y, z), side(s) {
+        if (s <= 0) throw std::invalid_argument("Сторона квадрата должна быть положительной");
+    }
+
+    double getSize() const override {
+        return side * side; // Площадь квадрата
+    }
+
+    void display() const override {
+        std::cout << "Квадрат с координатами центра (" << x << ", " << y << ", " << z << "): "
+                  << "Длина стороны = " << side << ", Площадь = " << getSize() << std::endl;
     }
 };
 
-// Класс D3, наследует D2 (private)
-class D3 : private D2 {
+// Класс Pyramid (пирамида), наследует Point
+class Pyramid : public Point {
 private:
-    bool flag;
+    double baseSide; // Длина стороны основания (предполагаем квадратное основание)
+    double height;   // Высота пирамиды
 
 public:
-    D3(const std::string& n = "D3", int v = 40, double d = 1.41, const std::string& i = "Info D3", bool f = true)
-        : D2(n, v, d, i), flag(f) {}
-    void Show() const override {
-        D2::Show(); // Вызываем метод базового класса
-        std::cout << "D3: flag = " << (flag ? "true" : "false") << std::endl;
+    Pyramid(double x = 0.0, double y = 0.0, double z = 0.0, double bs = 1.0, double h = 1.0)
+        : Point(x, y, z), baseSide(bs), height(h) {
+        if (bs <= 0 || h <= 0) throw std::invalid_argument("Сторона основания и высота пирамиды должны быть положительными");
+    }
+
+    double getSize() const override {
+        // Объём пирамиды: V = (1/3) * S_основания * h, где S_основания = baseSide^2
+        return (1.0 / 3.0) * (baseSide * baseSide) * height;
+    }
+
+    void display() const override {
+        std::cout << "Пирамида с координатами основания (" << x << ", " << y << ", " << z << "): "
+                  << "Сторона основания = " << baseSide << ", Высота = " << height
+                  << ", Объем = " << getSize() << std::endl;
     }
 };
 
-// Класс D4, наследует D2 (public)
-class D4 : public D2 {
-private:
-    char symbol;
+// Функция для демонстрации полиморфизма
+void showObject(const Point* obj) {
+    obj->display();
+}
 
-public:
-    D4(const std::string& n = "D4", int v = 50, double d = 0.58, const std::string& i = "Info D4", char s = 'A')
-        : D2(n, v, d, i), symbol(s) {}
-    void Show() const override {
-        D2::Show(); // Вызываем метод базового класса
-        std::cout << "D4: symbol = " << symbol << std::endl;
-    }
-};
-
-// Функция main для иллюстрации иерархии
 int main() {
-    // Устанавливаем локаль для корректного вывода русских символов (если нужно)
     setlocale(LC_ALL, "RUS");
-    std::cout << "Демонстрация иерархии наследования:\n\n";
+    try {
+        // Создаём объекты разных классов
+        Point* point1 = new ConcretePoint(0.0, 0.0, 0.0); // Точка
+        Point* point2 = new Square(1.0, 2.0, 3.0, 2.0);   // Квадрат
+        Point* point3 = new Pyramid(2.0, 3.0, 1.0, 3.0, 3.0); // Пирамида
 
-    // Создаём объекты каждого класса
-    B1 b1;
-    B2 b2;
-    D1 d1;
-    D2 d2;
-    D3 d3;
-    D4 d4;
+        // Вектор указателей для хранения объектов
+        std::vector<Point*> objects;
+        objects.push_back(point1);
+        objects.push_back(point2);
+        objects.push_back(point3);
 
-    std::cout << "Вывод объектов:\n";
-    std::cout << "---------------\n";
+        // Вывод информации о каждом объекте через полиморфизм
+        std::cout << "Информация о объектах:\n";
+        std::cout << "--------------------\n";
+        for (const Point* obj : objects) {
+            showObject(obj);
+        }
 
-    // Выводим информацию о каждом объекте
-    b1.Show();
-    std::cout << "---------------\n";
-    b2.Show();
-    std::cout << "---------------\n";
-    d1.Show();
-    std::cout << "---------------\n";
-    d2.Show();
-    std::cout << "---------------\n";
-    d3.Show();
-    std::cout << "---------------\n";
-    d4.Show();
+        // Очистка памяти
+        for (Point* obj : objects) {
+            delete obj;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Ошибка: " << e.what() << std::endl;
+    }
 
     return 0;
 }
