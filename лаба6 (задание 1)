@@ -14,34 +14,36 @@ public:
     virtual ~B1() = default; // Виртуальный деструктор для правильного удаления объектов
 };
 
-// Класс B2, наследует B1 с protected
-class B2 : protected B1 {
+// Базовый класс B2 (независимый от B1)
+class B2 {
 protected:
     int value;
 
 public:
-    B2(const std::string& n = "B2", int v = 10) : B1(n), value(v) {}
-    void Show() const override {
-        B1::Show(); // Вызываем метод базового класса
+    B2(int v = 10) : value(v) {}
+    virtual void Show() const {
         std::cout << "B2: value = " << value << std::endl;
     }
+    virtual ~B2() = default;
 };
 
-// Класс D1, наследует B2 с protected
-class D1 : protected B2 {
+// Класс D1, наследует B1 (public) и B2 (protected)
+class D1 : public B1, protected B2 {
 protected:
     double data;
 
 public:
-    D1(const std::string& n = "D1", int v = 20, double d = 3.14) : B2(n, v), data(d) {}
+    D1(const std::string& n = "D1", int v = 20, double d = 3.14) 
+        : B1(n), B2(v), data(d) {}
     void Show() const override {
-        B2::Show(); // Вызываем метод базового класса
+        B1::Show(); // Вызываем метод базового класса B1
+        B2::Show(); // Вызываем метод базового класса B2
         std::cout << "D1: data = " << data << std::endl;
     }
 };
 
-// Класс D2, наследует D1 с public
-class D2 : public D1 {
+// Класс D2, наследует D1 (protected)
+class D2 : protected D1 {
 private:
     std::string info;
 
@@ -54,21 +56,21 @@ public:
     }
 };
 
-// Класс D3, наследует D1 с private
-class D3 : private D1 {
+// Класс D3, наследует D2 (private)
+class D3 : private D2 {
 private:
     bool flag;
 
 public:
-    D3(const std::string& n = "D3", int v = 40, double d = 1.41, bool f = true)
-        : D1(n, v, d), flag(f) {}
-    void Show() const {
-        D1::Show(); // Вызываем метод базового класса
+    D3(const std::string& n = "D3", int v = 40, double d = 1.41, const std::string& i = "Info D3", bool f = true)
+        : D2(n, v, d, i), flag(f) {}
+    void Show() const override {
+        D2::Show(); // Вызываем метод базового класса
         std::cout << "D3: flag = " << (flag ? "true" : "false") << std::endl;
     }
 };
 
-// Класс D4, наследует D2 с public
+// Класс D4, наследует D2 (public)
 class D4 : public D2 {
 private:
     char symbol;
@@ -84,6 +86,7 @@ public:
 
 // Функция main для иллюстрации иерархии
 int main() {
+    // Устанавливаем локаль для корректного вывода русских символов (если нужно)
     setlocale(LC_ALL, "RUS");
     std::cout << "Демонстрация иерархии наследования:\n\n";
 
