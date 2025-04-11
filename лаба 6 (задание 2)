@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-
+using namespace std
 // Базовый класс Point (точка)
 class Point {
 protected:
@@ -29,8 +29,8 @@ public:
     }
 
     void display() const override {
-        std::cout << "Точка с координатами (" << x << ", " << y << ", " << z << "): "
-                  << "Размер = " << getSize() << std::endl;
+        cout << "Точка с координатами (" << x << ", " << y << ", " << z << "): "
+                  << "Размер = " << getSize() << endl;
     }
 };
 
@@ -42,7 +42,7 @@ private:
 public:
     Square(double x = 0.0, double y = 0.0, double z = 0.0, double s = 1.0)
         : Point(x, y, z), side(s) {
-        if (s <= 0) throw std::invalid_argument("Сторона квадрата должна быть положительной");
+        if (s <= 0) throw invalid_argument("Сторона квадрата должна быть положительной");
     }
 
     double getSize() const override {
@@ -50,8 +50,8 @@ public:
     }
 
     void display() const override {
-        std::cout << "Квадрат с координатами центра (" << x << ", " << y << ", " << z << "): "
-                  << "Длина стороны = " << side << ", Площадь = " << getSize() << std::endl;
+        cout << "Квадрат с координатами центра (" << x << ", " << y << ", " << z << "): "
+                  << "Длина стороны = " << side << ", Площадь = " << getSize() << endl;
     }
 };
 
@@ -64,7 +64,7 @@ private:
 public:
     Pyramid(double x = 0.0, double y = 0.0, double z = 0.0, double bs = 1.0, double h = 1.0)
         : Point(x, y, z), baseSide(bs), height(h) {
-        if (bs <= 0 || h <= 0) throw std::invalid_argument("Сторона основания и высота пирамиды должны быть положительными");
+        if (bs <= 0 || h <= 0) throw invalid_argument("Сторона основания и высота пирамиды должны быть положительными");
     }
 
     double getSize() const override {
@@ -73,9 +73,9 @@ public:
     }
 
     void display() const override {
-        std::cout << "Пирамида с координатами основания (" << x << ", " << y << ", " << z << "): "
+        cout << "Пирамида с координатами основания (" << x << ", " << y << ", " << z << "): "
                   << "Сторона основания = " << baseSide << ", Высота = " << height
-                  << ", Объем = " << getSize() << std::endl;
+                  << ", Объем = " << getSize() << endl;
     }
 };
 
@@ -93,14 +93,14 @@ int main() {
         Point* point3 = new Pyramid(2.0, 3.0, 1.0, 3.0, 3.0); // Пирамида
 
         // Вектор указателей для хранения объектов
-        std::vector<Point*> objects;
+        vector<Point*> objects;
         objects.push_back(point1);
         objects.push_back(point2);
         objects.push_back(point3);
 
         // Вывод информации о каждом объекте через полиморфизм
-        std::cout << "Информация о объектах:\n";
-        std::cout << "--------------------\n";
+        cout << "Информация о объектах:\n";
+        cout << "--------------------\n";
         for (const Point* obj : objects) {
             showObject(obj);
         }
@@ -110,8 +110,8 @@ int main() {
             delete obj;
         }
     }
-    catch (const std::exception& e) {
-        std::cerr << "Ошибка: " << e.what() << std::endl;
+    catch (const exception& e) {
+        cerr << "Ошибка: " << e.what() << endl;
     }
 
     return 0;
