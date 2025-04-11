@@ -1,17 +1,16 @@
 #include <iostream>
 #include <string>
-
+using namespace std;
 // Базовый класс B1
 class B1 {
 protected:
-    std::string name;
+    string name;
 
 public:
-    B1(const std::string& n = "B1") : name(n) {}
-    virtual void Show() const {
-        std::cout << "B1: " << name << std::endl;
+    B1(const string& n = "B1") : name(n) {}
+    void Show() const { 
+        cout << "B1: " << name << endl;
     }
-    virtual ~B1() = default; // Виртуальный деструктор для правильного удаления объектов
 };
 
 // Базовый класс B2 (независимый от B1)
@@ -21,10 +20,9 @@ protected:
 
 public:
     B2(int v = 10) : value(v) {}
-    virtual void Show() const {
-        std::cout << "B2: value = " << value << std::endl;
+    void Show() const { 
+        cout << "B2: value = " << value << endl;
     }
-    virtual ~B2() = default;
 };
 
 // Класс D1, наследует B1 (public) и B2 (protected)
@@ -33,26 +31,26 @@ protected:
     double data;
 
 public:
-    D1(const std::string& n = "D1", int v = 20, double d = 3.14) 
+    D1(const string& n = "D1", int v = 20, double d = 3.14) 
         : B1(n), B2(v), data(d) {}
-    void Show() const override {
-        B1::Show(); // Вызываем метод базового класса B1
-        B2::Show(); // Вызываем метод базового класса B2
-        std::cout << "D1: data = " << data << std::endl;
+    void Show() const { 
+        B1::Show();
+        B2::Show();
+        cout << "D1: data = " << data << endl;
     }
 };
 
 // Класс D2, наследует D1 (protected)
 class D2 : protected D1 {
 private:
-    std::string info;
+    string info;
 
 public:
-    D2(const std::string& n = "D2", int v = 30, double d = 2.71, const std::string& i = "Info D2")
+    D2(const string& n = "D2", int v = 30, double d = 2.71, const string& i = "Info D2")
         : D1(n, v, d), info(i) {}
-    void Show() const override {
-        D1::Show(); // Вызываем метод базового класса
-        std::cout << "D2: info = " << info << std::endl;
+    void Show() const { 
+        D1::Show();
+        cout << "D2: info = " << info << endl;
     }
 };
 
@@ -62,11 +60,11 @@ private:
     bool flag;
 
 public:
-    D3(const std::string& n = "D3", int v = 40, double d = 1.41, const std::string& i = "Info D3", bool f = true)
+    D3(const string& n = "D3", int v = 40, double d = 1.41, const string& i = "Info D3", bool f = true)
         : D2(n, v, d, i), flag(f) {}
-    void Show() const override {
-        D2::Show(); // Вызываем метод базового класса
-        std::cout << "D3: flag = " << (flag ? "true" : "false") << std::endl;
+    void Show() const { 
+        D2::Show();
+        cout << "D3: flag = " << (flag ? "true" : "false") << endl;
     }
 };
 
@@ -76,42 +74,29 @@ private:
     char symbol;
 
 public:
-    D4(const std::string& n = "D4", int v = 50, double d = 0.58, const std::string& i = "Info D4", char s = 'A')
+    D4(const string& n = "D4", int v = 50, double d = 0.58, const string& i = "Info D4", char s = 'A')
         : D2(n, v, d, i), symbol(s) {}
-    void Show() const override {
-        D2::Show(); // Вызываем метод базового класса
-        std::cout << "D4: symbol = " << symbol << std::endl;
+    void Show() const { 
+        D2::Show();
+        cout << "D4: symbol = " << symbol << endl;
     }
 };
 
-// Функция main для иллюстрации иерархии
+// Функция main для иллюстрации 
 int main() {
-    // Устанавливаем локаль для корректного вывода русских символов (если нужно)
     setlocale(LC_ALL, "RUS");
-    std::cout << "Демонстрация иерархии наследования:\n\n";
+    cout << "Демонстрация объектов D3 и D4:\n\n";
 
-    // Создаём объекты каждого класса
-    B1 b1;
-    B2 b2;
-    D1 d1;
-    D2 d2;
-    D3 d3;
-    D4 d4;
+    
+    D3 d3("Custom D3", 45, 1.5, "D3 Info", false);
+    D4 d4("Custom D4", 55, 0.7, "D4 Info", 'Z');
 
-    std::cout << "Вывод объектов:\n";
-    std::cout << "---------------\n";
+    cout << "Вывод объектов:\n";
+    cout << "---------------\n";
 
-    // Выводим информацию о каждом объекте
-    b1.Show();
-    std::cout << "---------------\n";
-    b2.Show();
-    std::cout << "---------------\n";
-    d1.Show();
-    std::cout << "---------------\n";
-    d2.Show();
-    std::cout << "---------------\n";
+    // Выводим информацию только о D3 и D4
     d3.Show();
-    std::cout << "---------------\n";
+    cout << "---------------\n";
     d4.Show();
 
     return 0;
